@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "lib": [],
+    "module": "commonjs",
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2016"
+  },
+  "include": [
+    "src"
+  ]
+}

@@ -11,6 +11,6 @@ export class Order {
 }
 
 export class Orderbook {
-    asks!: Order[];
-    bids!: Order[];
+    asks!: Array<Order>;
+    bids!: Array<Order>;
 }

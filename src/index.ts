@@ -1,45 +1,49 @@
 import { UpbitWebSocket, UpbitWebSocketSimpleResponse } from "./websocket/upbit";
 import { Obu, Order, Orderbook } from "./entities/order";
 
-const map = new Map<string, Orderbook>();
+const map = new Map<String, Orderbook>();
 
-const obuIterate = (obu: Obu) => {
+const getRefindData = (data: UpbitWebSocketSimpleResponse) => {
+  let orderbook: Orderbook = { 
+    asks: new Array<Order>(), 
+    bids : new Array<Order>() 
+  };
   
-}
+  data.obu.forEach(item => {
+    const obu: Obu = <Obu><unknown>item;
+    const askOrder: { price: number, quantity: number } = { price: obu.ap, quantity: obu.as };
+    const bidOrder: { price: number, quantity: number } = { price: obu.bp, quantity: obu.bs };
+    orderbook.asks.push(askOrder);
+    orderbook.bids.push(bidOrder);
+  });
 
-const getRefindOrder = (data: UpbitWebSocketSimpleResponse) => {
-  console.log(data);
-  const orderbook = new Orderbook();
-  /*
-  Object loop 통해 orderbook 만들어서 반환해야 함
-  
-  */
+  orderbook.asks.sort(item => item.price);
+  orderbook.bids.sort(item => item.price);
 
   return orderbook;
 };
 
-const getRefindData = (data: UpbitWebSocketSimpleResponse) => {
-  
-  //안에 있는 데이터 정렬
-  /*
-  1. data.tms 날짜로 변경
-  2. orderbook: { asks : [{ap, as}], bids : [{bp, bs}] } 형식으로 데이터 구조 변경
-  3. krw-btc -> krw-eth 등 5개의 페어가 나오도록 처리
-  */
-  const order = map.get(data.cd);
+const setData = (coinType: String, orderbook: Orderbook) => {
+  const order = map.get(coinType);
   if (order == null) {
-    const ordebook = getRefindOrder(data);
-    map.set(data.cd, ordebook);
+    map.set(coinType, orderbook);
+  } else {
+    order.asks.push(...orderbook.asks);
+    order.bids.push(...orderbook.bids);
+    order.asks.sort(function (a, b) { return a.price - b.price; });
+    order.bids.sort(function (a, b) { return a.price - b.price; }).reverse();
   }
-
-  return null;
 };
 
-const printOrderbooks = (data: any) => {
+const printData = (data: any) => {
   //프린트 하는 로직 추가
 };
 
-async function Init() {
+const InsertData = () => {
+  //Redis 연동부분 추가
+};
+
+async function connecting() {
   try {
     const upbit_ws = new UpbitWebSocket();
 
@@ -48,17 +52,18 @@ async function Init() {
     });
 
     upbit_ws.OnMessage((data) => {
-      //console.log(data);
       const refinedData = getRefindData(data);
-      // printOrderbooks(refinedData);
+      setData(data.cd, refinedData);
+      //printData();
+      //InsertData();
     });
 
     upbit_ws.OnClose(() => {
       console.log("Oops upbit websocket closed.");
     });
   } catch (err) {
-    console.log(`[ERROR]`, err);
+    console.log(`Error : ${err}`);
   }
 };
 
-Init();
+connecting();

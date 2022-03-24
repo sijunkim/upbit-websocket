@@ -8,6 +8,9 @@ const getRefindData = (data: UpbitWebSocketSimpleResponse) => {
   2. orderbook: { asks : [{ap, as}], bids : [{bp, bs}] } 형식으로 데이터 구조 변경
   3. krw-btc -> krw-eth 등 5개의 페어가 나오도록 처리
   */
+
+  
+
   return null;
 }
 

@@ -3,7 +3,7 @@ import { Obu, Order, Orderbook } from "./entities/order";
 
 const map = new Map<String, Orderbook>();
 
-const getRefindData = (data: UpbitWebSocketSimpleResponse) => {
+const getRefindData = async (data: UpbitWebSocketSimpleResponse) => {
   let orderbook: Orderbook = { 
     asks: new Array<Order>(), 
     bids : new Array<Order>() 
@@ -16,9 +16,6 @@ const getRefindData = (data: UpbitWebSocketSimpleResponse) => {
     orderbook.asks.push(askOrder);
     orderbook.bids.push(bidOrder);
   });
-
-  orderbook.asks.sort(item => item.price);
-  orderbook.bids.sort(item => item.price);
 
   return orderbook;
 };
@@ -43,7 +40,7 @@ const InsertData = () => {
   //Redis 연동부분 추가
 };
 
-async function connecting() {
+const connecting = async () => {
   try {
     const upbit_ws = new UpbitWebSocket();
 
@@ -51,9 +48,9 @@ async function connecting() {
       console.log("Wow upbit websocket connected.");
     });
 
-    upbit_ws.OnMessage((data) => {
-      const refinedData = getRefindData(data);
-      setData(data.cd, refinedData);
+    upbit_ws.OnMessage(async (data) => {
+      const refinedData = await getRefindData(data);
+      setData(data.cd, await refinedData);
       //printData();
       //InsertData();
     });

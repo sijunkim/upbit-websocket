@@ -22,9 +22,9 @@ export class UpbitWebSocket {
   }
 
   public Open(payload: UpbitSocketPayload, callback?: Function) {
-    this.webSocket.onopen = () => {
+    this.webSocket.onopen = async () => {
       const formatString = JSON.stringify([{ ticket: ticket() }, payload, { format: "SIMPLE" } ]);
-      this.webSocket.send(formatString);
+      await this.webSocket.send(formatString);
       if (callback) {
         callback();
       }
@@ -34,7 +34,7 @@ export class UpbitWebSocket {
   public OnMessage(callback: (data: UpbitWebSocketSimpleResponse) => void) {
     this.webSocket.onmessage = async (response) => {
       const data = JSON.parse(response.data.toString("utf-8"));
-      callback(data);
+      await callback(data);
     };
   }
 

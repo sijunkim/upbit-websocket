@@ -1,16 +1,16 @@
-export class Obu {
+export class ObuVO {
     ap!: number;
     as!: number;
     bp!: number;
     bs!: number;
 }
 
-export class Order {
+export class OrderVO {
     price!: number;
     quantity!: number;
 }
 
-export class Orderbook {
-    asks!: Array<Order>;
-    bids!: Array<Order>;
+export class OrderbookVO {
+    asks!: Array<OrderVO>;
+    bids!: Array<OrderVO>;
 }

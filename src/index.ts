@@ -1,16 +1,19 @@
 import { UpbitWebSocket, UpbitWebSocketSimpleResponse } from "./websocket/upbit";
-import { Obu, Order, Orderbook } from "./vo/order";
+import { ObuVO, OrderVO, OrderbookVO } from "./vo/order";
+import * as dotenv from 'dotenv';
+import { DataSource } from "typeorm"
+import { Orderbook } from "./entity/orderbook";
 
-const map = new Map<String, Orderbook>();
+const map = new Map<String, OrderbookVO>();
 
 const getRefindData = async (data: UpbitWebSocketSimpleResponse) => {
-  let orderbook: Orderbook = { 
-    asks: new Array<Order>(), 
-    bids : new Array<Order>() 
+  let orderbook: OrderbookVO = { 
+    asks: new Array<OrderVO>(), 
+    bids : new Array<OrderVO>() 
   };
   
   data.obu.forEach(item => {
-    const obu: Obu = <Obu><unknown>item;
+    const obu: ObuVO = <ObuVO><unknown>item;
     const askOrder: { price: number, quantity: number } = { price: obu.ap, quantity: obu.as };
     const bidOrder: { price: number, quantity: number } = { price: obu.bp, quantity: obu.bs };
     orderbook.asks.push(askOrder);
@@ -20,13 +23,13 @@ const getRefindData = async (data: UpbitWebSocketSimpleResponse) => {
   return orderbook;
 };
 
-const setData = (coinType: String, orderbook: Orderbook) => {
+const setData = (coinType: String, orderbookVO: OrderbookVO) => {
   const order = map.get(coinType);
   if (order == null) {
-    map.set(coinType, orderbook);
+    map.set(coinType, orderbookVO);
   } else {
-    order.asks.push(...orderbook.asks);
-    order.bids.push(...orderbook.bids);
+    order.asks.push(...orderbookVO.asks);
+    order.bids.push(...orderbookVO.bids);
     order.asks.sort(function (a, b) { return a.price - b.price; });
     order.bids.sort(function (a, b) { return a.price - b.price; }).reverse();
   }
@@ -62,5 +65,42 @@ const connecting = async () => {
     console.log(`Error : ${err}`);
   }
 };
+
+// const environmentSetting = () => {
+//   dotenv.config({
+//     path: path.resolve(
+//       process.env.NODE_ENV === 'production'
+//         ? '.production.env'
+//         : process.env.NODE_ENV === 'stage'
+//         ? '.stage.env'
+//         : '.development.env',
+//     ),
+//   });
+//   dotenv.config();
+// };
+
+const typeormSetting = () => {
+  const dataSource = new DataSource({
+    type: "mysql",
+    host: "localhost",
+    port: 3306,
+    username: "root",
+    password: "knf345n@@",
+    database: "kimsijun-upbit-websocket",
+    entities: [Orderbook],
+    synchronize: true,
+    logging: true,
+  }); 
+  
+  dataSource.initialize() .then(() => {
+      // here you can start to work with your database
+  })
+  .catch((error) => console.log(error))
+};
+
+
+//environmentSetting();
+
+typeormSetting();
 
 connecting();

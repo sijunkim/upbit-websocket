@@ -1,0 +1,21 @@
+{
+  "type": "mariadb",
+  "host": "127.0.0.1",
+  "port": 3306,
+  "username": "root",
+  "password": "1234",
+  "database": "kimsijun_upbit_websocket",
+  "entities": [
+    "dist/**/*.entity{.ts,.js}"
+  ],
+  "synchronize": true,
+  "logging": true,
+  "migrationsTableName": "migrations",
+  "migrations": [
+    "src/migration/*.ts"
+  ],
+  "cli": {
+    "migrationsDir": "src/migration"
+  },
+  "ssl": false
+}

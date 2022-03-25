@@ -1,5 +1,5 @@
 import { UpbitWebSocket, UpbitWebSocketSimpleResponse } from "./websocket/upbit";
-import { Obu, Order, Orderbook } from "./entities/order";
+import { Obu, Order, Orderbook } from "./vo/order";
 
 const map = new Map<String, Orderbook>();
 
@@ -44,18 +44,18 @@ const connecting = async () => {
   try {
     const upbit_ws = new UpbitWebSocket();
 
-    upbit_ws.Open({ type: "orderbook", codes: ["KRW-BTC","KRW-ETH","BTC-ETC","BTC-XRP","BTC-DOGE"] }, () => {
+    upbit_ws.open({ type: "orderbook", codes: ["KRW-BTC","KRW-ETH","BTC-ETC","BTC-XRP","BTC-DOGE"] }, () => {
       console.log("Wow upbit websocket connected.");
     });
 
-    upbit_ws.OnMessage(async (data) => {
+    upbit_ws.onMessage(async (data) => {
       const refinedData = await getRefindData(data);
       setData(data.cd, await refinedData);
       //printData();
       //InsertData();
     });
 
-    upbit_ws.OnClose(() => {
+    upbit_ws.onClose(() => {
       console.log("Oops upbit websocket closed.");
     });
   } catch (err) {

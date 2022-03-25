@@ -21,30 +21,30 @@ export class UpbitWebSocket {
     this.webSocket = new WebSocket("wss://api.upbit.com/websocket/v1");
   }
 
-  public Open(payload: UpbitSocketPayload, callback?: Function) {
+  async open(payload: UpbitSocketPayload, callback?: Function) {
     this.webSocket.onopen = async () => {
       const formatString = JSON.stringify([{ ticket: ticket() }, payload, { format: "SIMPLE" } ]);
-      await this.webSocket.send(formatString);
+      this.webSocket.send(formatString);
       if (callback) {
-        callback();
+        await callback();
       }
     };
   }
 
-  public OnMessage(callback: (data: UpbitWebSocketSimpleResponse) => void) {
+  async onMessage(callback: (data: UpbitWebSocketSimpleResponse) => void) {
     this.webSocket.onmessage = async (response) => {
       const data = JSON.parse(response.data.toString("utf-8"));
-      await callback(data);
+      callback(data);
     };
   }
 
-  public Close() {
+  async close(): Promise<void> {
     this.webSocket.close();
   }
 
-  public OnClose(callback: Function) {
-    this.webSocket.onclose = () => {
-      callback();
+  async onClose(callback: Function) {
+    this.webSocket.onclose = async () => {
+      await callback();
     };
   }
 }

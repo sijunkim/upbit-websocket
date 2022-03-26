@@ -2,15 +2,20 @@
 프로그램 실행 환경
 OS : MacOS Monterey 12.2.1
 IDE : Visual Studio code
-DB : MySql 8.0
+DB : MySql 8.0 (127.0.0.1:3306)
 
 프로그램 실행 프로세스
-0. nodejs 사전 설치
+사전 작업 : nodejs 사전 설치, index.ts 파일 안에 DB 연결 정보 입력, kimsijun-upbit-websocket 데이터베이스 생성
+
 1. > npm install
 2. > tsc
 3. > npm start
 
+디버깅
+F5 입력하여 디버깅 모드 진입 시 콘솔에서 DB에 저장중인 데이터 확인 가능
 
+메모리 저장
+setData 함수 안에서 Map 안에 저장중인 것 디버깅 통해서 확인 가능
 
 트러블슈팅
 

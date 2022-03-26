@@ -35,10 +35,6 @@ const setData = (coinType: String, orderbookVO: OrderbookVO) => {
   }
 };
 
-const printData = (data: any) => {
-  //프린트 하는 로직 추가
-};
-
 const InsertData = async (type: string, refinedData: OrderbookVO) => {
   const orderbook = new Orderbook();
   orderbook.code = type;
@@ -58,7 +54,6 @@ const connecting = async () => {
     upbit_ws.onMessage(async (data) => {
       const refinedData = await getRefindData(data);
       await setData(data.cd, refinedData);
-      //printData();
       await InsertData(data.cd, refinedData);
     });
 

@@ -2,9 +2,12 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 @Entity()
 export class Orderbook {
-  @PrimaryGeneratedColumn("identity")
-  idx!: number;
+  @PrimaryGeneratedColumn()
+  public idx: number;
 
-  @Column("text", { nullable: true })
-  data!: string;
+  @Column("text")
+  public code: string;
+
+  @Column("text")
+  public data: string;
 }

@@ -6,9 +6,11 @@ DB : MySql 8.0
 
 프로그램 실행 프로세스
 0. nodejs 사전 설치
-1. > npm install 플러그인 설치
-2. > tsc 타입스크립트 소스 빌드
+1. > npm install
+2. > tsc
 3. > npm start
+
+
 
 트러블슈팅
 

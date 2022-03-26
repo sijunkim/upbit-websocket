@@ -1,6 +1,6 @@
 import { UpbitWebSocket, UpbitWebSocketSimpleResponse } from "./websocket/upbit";
 import { ObuVO, OrderVO, OrderbookVO } from "./vo/order";
-import * as dotenv from 'dotenv';
+//import * as dotenv from 'dotenv';
 import { DataSource } from "typeorm"
 import { Orderbook } from "./entity/orderbook";
 
@@ -39,8 +39,12 @@ const printData = (data: any) => {
   //프린트 하는 로직 추가
 };
 
-const InsertData = () => {
-  //Redis 연동부분 추가
+const InsertData = async (type: string, refinedData: OrderbookVO) => {
+  const orderbook = new Orderbook();
+  orderbook.code = type;
+  orderbook.data = JSON.stringify(refinedData);
+
+  AppDataSource.getRepository(Orderbook).save(orderbook);
 };
 
 const connecting = async () => {
@@ -53,9 +57,9 @@ const connecting = async () => {
 
     upbit_ws.onMessage(async (data) => {
       const refinedData = await getRefindData(data);
-      setData(data.cd, await refinedData);
+      await setData(data.cd, refinedData);
       //printData();
-      //InsertData();
+      await InsertData(data.cd, refinedData);
     });
 
     upbit_ws.onClose(() => {
@@ -66,41 +70,31 @@ const connecting = async () => {
   }
 };
 
-// const environmentSetting = () => {
-//   dotenv.config({
-//     path: path.resolve(
-//       process.env.NODE_ENV === 'production'
-//         ? '.production.env'
-//         : process.env.NODE_ENV === 'stage'
-//         ? '.stage.env'
-//         : '.development.env',
-//     ),
-//   });
-//   dotenv.config();
-// };
+// dotenv.config({
+//   path: path.resolve(
+//     process.env.NODE_ENV === 'production'
+//       ? '.production.env'
+//       : process.env.NODE_ENV === 'stage'
+//       ? '.stage.env'
+//       : '.development.env',
+//   ),
+// });
 
-const typeormSetting = () => {
-  const dataSource = new DataSource({
-    type: "mysql",
-    host: "localhost",
-    port: 3306,
-    username: "root",
-    password: "knf345n@@",
-    database: "kimsijun-upbit-websocket",
-    entities: [Orderbook],
-    synchronize: true,
-    logging: true,
-  }); 
-  
-  dataSource.initialize() .then(() => {
-      // here you can start to work with your database
-  })
-  .catch((error) => console.log(error))
-};
+const AppDataSource = new DataSource({
+  type: "mysql",
+  host: "127.0.0.1",
+  port: 3306,
+  username: "root",
+  password: "knf345n@@",
+  database: "kimsijun-upbit-websocket",
+  entities: [Orderbook],
+  synchronize: true,
+  logging: true,
+}); 
 
-
-//environmentSetting();
-
-typeormSetting();
+AppDataSource.initialize().then(() => {
+    // here you can start to work with your database
+})
+.catch((error) => console.log(error));
 
 connecting();

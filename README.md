@@ -6,7 +6,7 @@ DB : MySql 8.0 (127.0.0.1:3306)
   
 사전 작업  
 1. nodejs 사전 설치  
-2. index.ts 파일 안에 DB 연결 정보 입력  
+2. mysql 8.0 로컬 설치 후 index.ts 파일 안에 DB 연결 정보 입력  
 3. kimsijun-upbit-websocket 데이터베이스 생성  
   
 프로그램 실행 프로세스  

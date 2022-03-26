@@ -20,6 +20,9 @@ F5 입력하여 디버깅 모드 진입 시 콘솔에서 DB에 저장중인 데�
 메모리 저장  
 setData 함수 안에서 Map 안에 저장중인 것 디버깅 통해서 확인 가능  
   
+데이터베이스 저장  
+InsertData 함수 안에서 MySql 안에 저장중인 것 콘솔 통해서 확인 가능  
+  
 트러블슈팅  
 [ERROR] : Client does not support authentication protocol requested by server; consider upgrading MySQL client  
 https://stackoverflow.com/questions/50093144/mysql-8-0-client-does-not-support-authentication-protocol-requested-by-server
